@@ -1,4 +1,4 @@
-
+SHELL := /bin/bash
 
 .env:
 	python -m venv .env
