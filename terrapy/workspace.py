@@ -7,13 +7,15 @@ import subprocess
 class ProcessResults:
     def __init__(self, returncode, stdout, stderr) -> None:
         self.returncode = returncode
-        self.successfull = returncode == 0
+        self.successful = returncode == 0
         self.stdout = stdout
         self.stderr = stderr
 
 
 def subprocess_stream(command, error_function=None, output_function=None, **kwargs):
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs)
+    process = subprocess.Popen(
+        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
+    )
     stdout = ""
     stderr = ""
     while True:
@@ -40,10 +42,6 @@ def subprocess_stream(command, error_function=None, output_function=None, **kwar
     return ProcessResults(returncode=process.poll(), stdout=stdout, stderr=stderr)
 
 
-class TerraformAuthentication:
-    pass
-
-
 class TerraformWorkspace:
     def __init__(self, path=None) -> None:
 
@@ -51,9 +49,9 @@ class TerraformWorkspace:
         if not self.terraform_path:
             raise Exception("Terraform binary is missing from system.")
 
-        version_data_raw = subprocess.run(["terraform", "-version", "-json"], stdout=subprocess.PIPE).stdout.decode(
-            "utf-8"
-        )
+        version_data_raw = subprocess.run(
+            ["terraform", "-version", "-json"], stdout=subprocess.PIPE
+        ).stdout.decode("utf-8")
 
         version_data = json.loads(version_data_raw)
         self.version = version_data["terraform_version"]
@@ -81,13 +79,27 @@ class TerraformWorkspace:
     def validate(self):
         return self.__subprocess_run_wrapper(["terraform", "validate", "-json"])
 
-    def plan(self, error_function=None, output_function=None):
-        return subprocess_stream(
-            [self.terraform_path, "plan", "-json"],
+    def plan(self, error_function=None, output_function=None, output_path=None):
+        command = [
+            self.terraform_path,
+            "plan",
+            "-json",
+            "-detailed-exitcode",
+            "-input=false",
+        ]
+
+        if output_path:
+            command.append(f"-out={output_path}")
+
+        results = subprocess_stream(
+            command,
             cwd=self.cwd,
             error_function=error_function,
             output_function=output_function,
         )
+        results.successful = results.returncode != 1
+
+        return
 
     def apply(
         self,

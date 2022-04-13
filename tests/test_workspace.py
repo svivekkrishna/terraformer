@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from terrapy.client import TerraformWorkspace
+from terrapy import TerraformWorkspace
 
 WORKSPACE_TEMPLATE = Path(__file__).parent.absolute() / "workspace"
 
