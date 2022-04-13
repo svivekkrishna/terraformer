@@ -8,8 +8,8 @@ install: .env
 
 pretty:
 	. .env/bin/activate && \
-	python -m black terrapy && \
-	isort terrapy
+	python -m black . && \
+	isort .
 
 .PHONY: tests
 tests: install pytest isort_check black_check
@@ -24,8 +24,8 @@ pytest_loud:
 
 isort_check:
 	. .env/bin/activate && \
-	python -m isort terrapy --check-only
+	python -m isort --check-only .
 
 black_check:
 	. .env/bin/activate && \
-	python -m black terrapy --check
+	python -m black . --check
