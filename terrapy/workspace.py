@@ -13,9 +13,7 @@ class ProcessResults:
 
 
 def subprocess_stream(command, error_function=None, output_function=None, **kwargs):
-    process = subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
-    )
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs)
     stdout = ""
     stderr = ""
     while True:
@@ -49,9 +47,9 @@ class TerraformWorkspace:
         if not self.terraform_path:
             raise Exception("Terraform binary is missing from system.")
 
-        version_data_raw = subprocess.run(
-            ["terraform", "-version", "-json"], stdout=subprocess.PIPE
-        ).stdout.decode("utf-8")
+        version_data_raw = subprocess.run(["terraform", "-version", "-json"], stdout=subprocess.PIPE).stdout.decode(
+            "utf-8"
+        )
 
         version_data = json.loads(version_data_raw)
         self.version = version_data["terraform_version"]
@@ -98,8 +96,7 @@ class TerraformWorkspace:
             output_function=output_function,
         )
         results.successful = results.returncode != 1
-
-        return
+        return results
 
     def apply(
         self,

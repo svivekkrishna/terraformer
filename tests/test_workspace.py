@@ -44,7 +44,7 @@ def test_init(workspace_environment):
 
 def test_plan(workspace):
     results = workspace.plan(error_function=print, output_function=print)
-    assert results.returncode == 0, "Terraform plan succeeded."
+    assert results.successful, "Terraform plan succeeded."
 
 
 def test_apply_interaction(workspace):
