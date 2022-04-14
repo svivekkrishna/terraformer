@@ -1,3 +1,18 @@
+terraform {
+  required_providers {
+    random = {
+      version = "~> 3.0"
+    }
+
+    null = {
+      version = "~> 3.0"
+    }
+
+  }
+}
+
+
+
 
 resource "random_string" "first" {
   length = 16
