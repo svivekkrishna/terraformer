@@ -30,7 +30,7 @@ class TerraformPlan(TerraformRun):
         self.terraform_version = plan_details["terraform_version"]
         self.format_version = plan_details["format_version"]
 
-        if self.format_version != "1.0":
+        if self.format_version[:1] != "1":
             raise Exception()
 
         self.deletions = 0
