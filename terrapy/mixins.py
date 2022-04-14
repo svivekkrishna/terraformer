@@ -21,12 +21,8 @@ class TerraformRun:
         pass_kwargs = {**default_kwargs, **kwargs}
         return subprocess.run(args, **pass_kwargs)
 
-    def _subprocess_stream(
-        self, command, error_function=None, output_function=None, **kwargs
-    ):
-        process = subprocess.Popen(
-            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
-        )
+    def _subprocess_stream(self, command, error_function=None, output_function=None, **kwargs):
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs)
         stdout = ""
         stderr = ""
         while True:

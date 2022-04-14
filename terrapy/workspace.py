@@ -15,9 +15,9 @@ class TerraformWorkspace(TerraformRun):
         if not self.terraform_path:
             raise Exception("Terraform binary is missing from system.")
 
-        version_data_raw = subprocess.run(
-            ["terraform", "-version", "-json"], stdout=subprocess.PIPE
-        ).stdout.decode("utf-8")
+        version_data_raw = subprocess.run(["terraform", "-version", "-json"], stdout=subprocess.PIPE).stdout.decode(
+            "utf-8"
+        )
 
         version_data = json.loads(version_data_raw)
         self.version = version_data["terraform_version"]
