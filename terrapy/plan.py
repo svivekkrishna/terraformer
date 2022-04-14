@@ -4,8 +4,9 @@ import subprocess
 
 from .mixins import TerraformRun
 
-MODIFICATION_ACTIONS = ["create", "update", "delete"]
+MODIFICATION_ACTIONS = ["update"]
 DELETION_ACTIONS = ["delete"]
+CREATE_ACTIONS = ["create"]
 
 
 class TerraformPlan(TerraformRun):
@@ -32,9 +33,20 @@ class TerraformPlan(TerraformRun):
         if self.format_version != "1.0":
             raise Exception()
 
+        self.deletions = 0
+        self.creations = 0
+        self.modifications = 0
+
         self.changes = {}
         for changeset in plan_details["resource_changes"]:
+            change = TerraformChange(changeset)
             self.changes[changeset["address"]] = TerraformChange(changeset)
+            if change.will_delete():
+                self.deletions += 1
+            if change.will_create():
+                self.creations += 1
+            if change.will_modify():
+                self.modifications += 1
 
 
 class TerraformChange:
@@ -48,3 +60,6 @@ class TerraformChange:
 
     def will_modify(self):
         return len(list(set(self.actions) & set(MODIFICATION_ACTIONS))) > 0
+
+    def will_create(self):
+        return len(list(set(self.actions) & set(CREATE_ACTIONS))) > 0
