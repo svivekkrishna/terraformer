@@ -99,7 +99,7 @@ class TerraformWorkspace(TerraformRun):
         )
 
     def destroy(self):
-        return self._subprocess_run([self.terraform_path, "destroy", "-json"])
+        return self._subprocess_run([self.terraform_path, "destroy", "-json"], raise_exception_on_failure=True)
 
     def output(self):
         return self._subprocess_run([self.terraform_path, "output", "-json"])
