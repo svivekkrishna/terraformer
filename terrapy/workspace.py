@@ -3,25 +3,32 @@ import os
 import shutil
 import subprocess
 import tempfile
+from logging import getLogger
 
+from .exceptions import TerraformError, TerraformRuntimeError
 from .mixins import TerraformRun
 from .plan import TerraformPlan
+
+logger = getLogger(__name__)
 
 
 class TerraformWorkspace(TerraformRun):
     def __init__(self, path=None) -> None:
-
         self.terraform_path = shutil.which("terraform")
         if not self.terraform_path:
-            raise Exception("Terraform binary is missing from system.")
+            raise TerraformError("Terraform binary is missing from system.")
 
-        version_data_raw = subprocess.run(["terraform", "-version", "-json"], stdout=subprocess.PIPE).stdout.decode(
-            "utf-8"
-        )
+        results = subprocess.run(["terraform", "-version", "-json"], stdout=subprocess.PIPE)
+        if results.returncode != 0:
+            raise TerraformRuntimeError("Unable to get terraform version", results)
 
-        version_data = json.loads(version_data_raw)
+        version_data = json.loads(results.stdout.decode("utf-8"))
         self.version = version_data["terraform_version"]
         self.is_outdated = version_data["terraform_outdated"]
+
+        if self.is_outdated:
+            logger.warning(f"Terraform version {self.version} is out of date. Please consider updating!")
+
         self.platform = version_data["platform"]
         self.provider_selections = version_data["provider_selections"]
 
@@ -29,13 +36,12 @@ class TerraformWorkspace(TerraformRun):
         self.env = {}
 
     def init(self):
-        return self._subprocess_run([self.terraform_path, "init"])
+        return self._subprocess_run([self.terraform_path, "init"], raise_exception_on_failure=True)
 
     def validate(self):
-        return self._subprocess_run(["terraform", "validate", "-json"])
+        return self._subprocess_run(["terraform", "validate", "-json"], raise_exception_on_failure=True)
 
     def plan(self, error_function=None, output_function=None, output_path=None):
-
         save_plan = True
         if not output_path:
             save_plan = False

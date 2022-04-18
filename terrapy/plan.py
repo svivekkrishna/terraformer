@@ -1,8 +1,12 @@
 import json
 import shutil
 import subprocess
+from logging import getLogger
 
+from .exceptions import TerraformRuntimeError, TerraformVersionError
 from .mixins import TerraformRun
+
+logger = getLogger(__name__)
 
 MODIFICATION_ACTIONS = ["update"]
 DELETION_ACTIONS = ["delete"]
@@ -21,9 +25,7 @@ class TerraformPlan(TerraformRun):
         results = self._subprocess_run(command)
 
         if results.returncode != 0:
-            print(results.stdout)
-            print(results.stderr)
-            raise Exception()
+            raise TerraformRuntimeError("Terraform plan failed", results)
 
         plan_details = json.loads(results.stdout)
         self.raw_plan = plan_details
@@ -31,7 +33,9 @@ class TerraformPlan(TerraformRun):
         self.format_version = plan_details["format_version"]
 
         if self.format_version[:1] != "1":
-            raise Exception()
+            raise TerraformVersionError(
+                f"Expected semantic version equivalent of v1, instead found '{self.format_version}'"
+            )
 
         self.deletions = 0
         self.creations = 0
