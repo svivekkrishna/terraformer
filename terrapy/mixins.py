@@ -35,7 +35,7 @@ class TerraformRun:
 
     def _subprocess_stream(self, command, error_function=None, output_function=None, **kwargs):
         logger.info(f"Running command '{command}'")
-        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs)
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=self.cwd, **kwargs)
         stdout = ""
         stderr = ""
         while True:
