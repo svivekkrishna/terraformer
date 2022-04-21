@@ -41,7 +41,7 @@ class TerraformPlan(TerraformRun):
         self.modifications = 0
 
         self.changes = {}
-        for changeset in plan_details["resource_changes"]:
+        for changeset in plan_details.get("resource_changes", []):
             change = TerraformChange(changeset)
             self.changes[changeset["address"]] = TerraformChange(changeset)
             if change.will_delete():
