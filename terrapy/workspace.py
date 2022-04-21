@@ -106,8 +106,19 @@ class TerraformWorkspace(TerraformRun):
             output_function=output_function,
         )
 
-    def destroy_plan(self, error_function=None, output_function=None, output_path=None):
-        return plan(self, error_function, output_function, output_path, destroy=True)
+    def destroy(self, auto_approve=False, error_function=None, output_function=None):
+        if not auto_approve:
+            return self.plan(
+                error_function=error_function,
+                output_function=output_function,
+                destroy=True
+            )
+        return self._subprocess_stream(
+            [self.terraform_path, "destroy", "-json", "-auto-approve"],
+            raise_exception_on_failure=True,  # TODO REVISIT
+            error_function=error_function,
+            output_function=output_function,
+        )
 
     def output(self):
         return self._subprocess_run([self.terraform_path, "output", "-json"])
