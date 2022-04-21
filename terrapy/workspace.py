@@ -100,7 +100,6 @@ class TerraformWorkspace(TerraformRun):
 
         return self._subprocess_stream(
             command,
-            cwd=self.cwd,
             error_function=error_function,
             output_function=output_function,
         )
