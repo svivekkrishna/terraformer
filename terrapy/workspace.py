@@ -115,7 +115,6 @@ class TerraformWorkspace(TerraformRun):
             )
         return self._subprocess_stream(
             [self.terraform_path, "destroy", "-json", "-auto-approve"],
-            raise_exception_on_failure=True,  # TODO REVISIT
             error_function=error_function,
             output_function=output_function,
         )
