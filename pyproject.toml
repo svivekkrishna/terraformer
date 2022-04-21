@@ -1,7 +1,7 @@
 [tool.isort]
 profile = "black"
 skip = [".env"]
-src_paths = ["terrapy", "test"]
+src_paths = ["terrapy", "tests"]
 
 [tool.black]
 exclude = '''
