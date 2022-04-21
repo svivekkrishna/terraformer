@@ -67,7 +67,6 @@ class TerraformWorkspace(TerraformRun):
 
         results = self._subprocess_stream(
             command,
-            cwd=self.cwd,
             error_function=error_function,
             output_function=output_function,
         )
@@ -108,11 +107,7 @@ class TerraformWorkspace(TerraformRun):
 
     def destroy(self, auto_approve=False, error_function=None, output_function=None):
         if not auto_approve:
-            return self.plan(
-                error_function=error_function,
-                output_function=output_function,
-                destroy=True
-            )
+            return self.plan(error_function=error_function, output_function=output_function, destroy=True)
         return self._subprocess_stream(
             [self.terraform_path, "destroy", "-json", "-auto-approve"],
             error_function=error_function,
