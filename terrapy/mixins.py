@@ -1,9 +1,12 @@
+import os
 import subprocess
 from logging import getLogger
 
 from .exceptions import TerraformRuntimeError
 
 logger = getLogger(__name__)
+
+DEFAULT_ENV_VARS = {"TF_IN_AUTOMATION": "1", "TF_INPUT": "0"}
 
 
 class ProcessResults:
@@ -21,7 +24,7 @@ class TerraformRun:
             "capture_output": True,
             "encoding": "utf-8",
             "timeout": None,
-            "env": self.env if len(self.env) > 0 else None,
+            "env": {**os.environ, **DEFAULT_ENV_VARS},
         }
         pass_kwargs = {**default_kwargs, **kwargs}
         results = subprocess.run(args, **pass_kwargs)
@@ -35,29 +38,40 @@ class TerraformRun:
 
     def _subprocess_stream(self, command, error_function=None, output_function=None, **kwargs):
         logger.info(f"Running command '{command}'")
-        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=self.cwd, **kwargs)
+        process = subprocess.Popen(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            cwd=self.cwd,
+            env={**os.environ, **DEFAULT_ENV_VARS},
+            universal_newlines=True,
+            encoding="utf-8",
+            bufsize=1,
+            **kwargs,
+        )
         stdout = ""
         stderr = ""
         while True:
+            had_output = False
+
             # Check for stdout changes.
-            output = process.stdout.readline().decode("utf-8")
-            if output != "":
+            for output in process.stdout:
                 stdout += output
-                logger.info(stdout)
+                logger.info(output)
                 if output_function:
                     output_function(output)
 
             # Check for stderr changes.
-            error = process.stderr.readline().decode("utf-8")
-            if error != "":
-                stderr += error
-                logger.warning(stderr)
+            for output in process.stderr:
+                had_output = True
+                stderr += output
+                logger.warning(output)
                 if error_function:
                     error_function(output)
 
             # Process is closed and we've read all of the outputs.
             if process.poll() is not None:
-                if output == "" and error == "":
+                if not had_output:
                     break
 
         # Match the return object of subprocess.run.
