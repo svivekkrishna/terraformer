@@ -41,7 +41,7 @@ class TerraformWorkspace(TerraformRun):
     def validate(self):
         return self._subprocess_run(["terraform", "validate", "-json"], raise_exception_on_failure=True)
 
-    def plan(self, error_function=None, output_function=None, output_path=None):
+    def plan(self, error_function=None, output_function=None, output_path=None, destroy=False):
         save_plan = True
         if not output_path:
             save_plan = False
@@ -56,6 +56,9 @@ class TerraformWorkspace(TerraformRun):
             "-input=false",
             f"-out={output_path}",
         ]
+
+        if destroy:
+            command.append("-destroy")
 
         results = self._subprocess_stream(
             command,
@@ -98,8 +101,8 @@ class TerraformWorkspace(TerraformRun):
             output_function=output_function,
         )
 
-    def destroy(self):
-        return self._subprocess_run([self.terraform_path, "destroy", "-json"], raise_exception_on_failure=True)
+    def destroy_plan(self, error_function=None, output_function=None, output_path=None):
+        return plan(self, error_function, output_function, output_path, destroy=True)
 
     def output(self):
         return self._subprocess_run([self.terraform_path, "output", "-json"])
