@@ -41,7 +41,10 @@ class TerraformPlan(TerraformRun):
         self.modifications = 0
 
         self.changes = {}
-        for changeset in plan_details.get("resource_changes", []):
+        self.parse_changes(plan_details.get("resource_changes", []))
+
+    def parse_changes(self, change_plan: list):
+        for changeset in change_plan:
             change = TerraformChange(changeset)
             self.changes[changeset["address"]] = TerraformChange(changeset)
             if change.will_delete():
