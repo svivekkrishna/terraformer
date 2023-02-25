@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from terrapyst.apply_log import TerraformApplyLog
+from terraformer.apply_log import TerraformApplyLog
 
 APPLY_LOG_FILE = Path(__file__).parent.absolute() / "terraform" / "applies" / "vpc.jsonl"
 with open(APPLY_LOG_FILE) as f:

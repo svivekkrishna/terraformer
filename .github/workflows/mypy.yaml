@@ -9,12 +9,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v4
         with:
-          python-version: "3.x"
+          python-version-file: .python-version
 
       - name: Install Dependencies
         run: make install
 
-      - name: Test Formatting
+      - name: Test Typing
         run: make mypy_check

@@ -7,14 +7,18 @@ on:
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
 
+env:
+  PUBLISH_TO_PYPI: true
+
 jobs:
   pypi:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+
+      - uses: actions/setup-python@v4
         with:
-          python-version: "3.x"
+          python-version-file: .python-version
 
       - name: Install Dependencies
         run: make install
@@ -24,7 +28,7 @@ jobs:
 
       # This will only run on Tags
       - name: Publish package
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+        if: ${{ env.PUBLISH_TO_PYPI == 'true' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags')}}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_PUBLISH_API_KEY }}

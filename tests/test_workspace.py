@@ -4,9 +4,9 @@ from unittest.mock import patch
 
 from glom import glom
 
-from terrapyst import TerraformWorkspace
-from terrapyst.mixins import TerraformRun
-from terrapyst.plan import TerraformPlan
+from terraformer import TerraformWorkspace
+from terraformer.mixins import TerraformRun
+from terraformer.plan import TerraformPlan
 
 from .conftest import PROVIDER_CACHE
 

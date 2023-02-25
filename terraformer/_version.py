@@ -44,8 +44,8 @@ def get_config():
     cfg.VCS = "git"
     cfg.style = "pep440"
     cfg.tag_prefix = ""
-    cfg.parentdir_prefix = "terrapyst-"
-    cfg.versionfile_source = "terrapyst/_version.py"
+    cfg.parentdir_prefix = "terraformer-"
+    cfg.versionfile_source = "terraformer/_version.py"
     cfg.verbose = False
     return cfg
 

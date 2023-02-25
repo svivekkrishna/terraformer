@@ -7,7 +7,7 @@ from logging import getLogger
 from pathlib import Path
 from typing import Callable, Dict, Optional, Tuple, Union
 
-from terrapyst.apply_log import TerraformApplyLog
+from terraformer.apply_log import TerraformApplyLog
 
 from .exceptions import TerraformError, TerraformRuntimeError
 from .mixins import ProcessResults, TerraformRun
@@ -97,7 +97,6 @@ class TerraformWorkspace(TerraformRun):
         auto_approve: bool = False,
         plan_file: str = None,
     ) -> Tuple[ProcessResults, TerraformApplyLog]:
-
         command = [self.terraform_path, "apply", "-json"]
 
         if plan_file:

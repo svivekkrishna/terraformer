@@ -17,7 +17,6 @@ RESOURCE_STATUSES = {
 
 
 class TerraformApplyLog:
-
     resources: Dict[str, Any] = {}
     errors: List[str] = []
     changes: Dict[str, Any] = {}
