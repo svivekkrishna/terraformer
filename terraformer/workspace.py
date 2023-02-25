@@ -92,10 +92,10 @@ class TerraformWorkspace(TerraformRun):
 
     def apply(
         self,
-        error_function: Callable = None,
-        output_function: Callable = None,
+        error_function: Callable | None = None,
+        output_function: Callable | None = None,
         auto_approve: bool = False,
-        plan_file: str = None,
+        plan_file: str | None = None,
     ) -> Tuple[ProcessResults, TerraformApplyLog]:
         command = [self.terraform_path, "apply", "-json"]
 
@@ -116,7 +116,10 @@ class TerraformWorkspace(TerraformRun):
         return results, apply_log
 
     def destroy(
-        self, auto_approve: bool = False, error_function: Callable = None, output_function: Callable = None
+        self,
+        auto_approve: bool = False,
+        error_function: Callable | None = None,
+        output_function: Callable | None = None,
     ) -> Tuple[ProcessResults, TerraformApplyLog]:
         terraform_command = [self.terraform_path, "destroy", "-json"]
         if auto_approve:
