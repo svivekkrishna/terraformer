@@ -8,9 +8,10 @@ dependencies = [
   "pydantic"
 ]
 description = "A python library"
-dynamic = ["version", "readme"]
+dynamic = ["version"]
 license = {"file" = "LICENSE"}
 name = "terraformer"
+readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.10"
 
 [project.optional-dependencies]
