@@ -46,6 +46,20 @@ workspace.init()
 results, apply_log = workspace.apply(auto_approve=True)
 ```
 
+There is also the capability to parse an existing plan JSON and create a plan object with the sensitive and unknown attributes sanitized
+in the output.
+
+```python
+  import json
+
+  plan_from_json = TerraformPlan("", "tests/terraform/plans/sensitive_plan.json", False)
+  for address, resource_change in plan_from_json.changes:
+    print(f"address: {address}\n")
+    print("before:\n")
+    print(json.dumps(resource_change.before_sanitized))
+    print("\nafter:\n")
+    print(json.dumps(resource_change.after_sanitized))
+```
 
 ### Installation
 
